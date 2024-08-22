@@ -6,7 +6,7 @@ import com.ezylang.evalex.parser.ParseException;
 
 public class Config {
     public static Config instance = new Config();
-    public String drag_calculation = "old_speed - old_speed^2 * 0.004";
+    public String drag_calculation = "old_speed - old_speed^2 * 0.004 - 0.04";
     public double copper_speed_per_tick_per_level = 0.1;
 
 

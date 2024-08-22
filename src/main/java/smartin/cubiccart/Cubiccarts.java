@@ -103,7 +103,7 @@ public class Cubiccarts implements ModInitializer {
                     watchService,
                     StandardWatchEventKinds.ENTRY_MODIFY
             );
-
+            Thread thread =
             new Thread(() -> {
                 try {
                     while (true) {
@@ -139,7 +139,9 @@ public class Cubiccarts implements ModInitializer {
                 } catch (RuntimeException e) {
                     LOGGER.error("Error watching config file: ", e);
                 }
-            }).start();
+            });
+            thread.setDaemon(true);
+            thread.start();
         } catch (IOException e) {
             LOGGER.error("Failed to set up file watcher: ", e);
         }
