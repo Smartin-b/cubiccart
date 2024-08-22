@@ -1,4 +1,4 @@
-package smartin.cubiccarts.block;
+package smartin.cubiccart.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
@@ -13,7 +13,8 @@ import net.minecraft.world.World;
 public class CopperRail extends AbstractRailBlock {
     public static final MapCodec<PoweredRailBlock> CODEC = createCodec(PoweredRailBlock::new);
     public static final EnumProperty<RailShape> SHAPE = Properties.STRAIGHT_RAIL_SHAPE;
-    public static final IntProperty POWERED = Properties.POWER;
+    public static final IntProperty POWER_LEVEL = Properties.POWER;
+    public static final BooleanProperty POWERED = Properties.POWERED;
 
     public MapCodec<PoweredRailBlock> getCodec() {
         return CODEC;
@@ -21,7 +22,7 @@ public class CopperRail extends AbstractRailBlock {
 
     public CopperRail(Settings settings) {
         super(true, settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(SHAPE, RailShape.NORTH_SOUTH).with(POWERED, 0).with(WATERLOGGED, false));
+        this.setDefaultState(this.stateManager.getDefaultState().with(SHAPE, RailShape.NORTH_SOUTH).with(POWER_LEVEL, 0).with(POWERED, Boolean.FALSE).with(WATERLOGGED, false));
     }
 
     protected int isPoweredByOtherRails(World world, BlockPos pos, BlockState state, boolean bl, int distance) {
@@ -115,7 +116,7 @@ public class CopperRail extends AbstractRailBlock {
                 return 0;
             } else if (shape == RailShape.NORTH_SOUTH && (railShape == RailShape.EAST_WEST || railShape == RailShape.ASCENDING_EAST || railShape == RailShape.ASCENDING_WEST)) {
                 return 0;
-            } else if (blockState.get(POWERED) > 0) {
+            } else if (blockState.get(POWER_LEVEL) > 0) {
                 return Math.max(world.getReceivedRedstonePower(pos), this.isPoweredByOtherRails(world, pos, blockState, bl, distance + 1));
             } else {
                 return 0;
@@ -124,13 +125,13 @@ public class CopperRail extends AbstractRailBlock {
     }
 
     protected void updateBlockState(BlockState state, World world, BlockPos pos, Block neighbor) {
-        int currentLevel = state.get(POWERED);
+        int currentLevel = state.get(POWER_LEVEL);
         int updateLevel = Math.max(
                 world.getReceivedRedstonePower(pos), Math.max(
                         this.isPoweredByOtherRails(world, pos, state, true, 0),
                         this.isPoweredByOtherRails(world, pos, state, false, 0)));
         if (currentLevel != updateLevel) {
-            world.setBlockState(pos, state.with(POWERED, updateLevel), 3);
+            world.setBlockState(pos, state.with(POWER_LEVEL, updateLevel).with(POWERED, updateLevel > 0), 3);
             world.updateNeighborsAlways(pos.down(), this);
             if (state.get(SHAPE).isAscending()) {
                 world.updateNeighborsAlways(pos.up(), this);
@@ -296,6 +297,6 @@ public class CopperRail extends AbstractRailBlock {
     }
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(new Property[]{SHAPE, POWERED, WATERLOGGED});
+        builder.add(SHAPE, POWER_LEVEL, POWERED, WATERLOGGED);
     }
 }

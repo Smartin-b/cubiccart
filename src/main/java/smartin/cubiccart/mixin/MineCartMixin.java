@@ -1,4 +1,4 @@
-package smartin.cubiccarts.mixin;
+package smartin.cubiccart.mixin;
 
 import net.minecraft.entity.vehicle.MinecartEntity;
 import org.spongepowered.asm.mixin.Mixin;

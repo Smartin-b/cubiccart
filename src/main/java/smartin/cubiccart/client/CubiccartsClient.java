@@ -1,4 +1,4 @@
-package smartin.cubiccarts.client;
+package smartin.cubiccart.client;
 
 import net.fabricmc.api.ClientModInitializer;
 
